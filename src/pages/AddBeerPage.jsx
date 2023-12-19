@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 function AddBeerPage() {
+  
+    
   // State variables to store the values of the form inputs. You can leave these as they are.
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
@@ -11,7 +13,7 @@ function AddBeerPage() {
   const [attenuationLevel, setAttenuationLevel] = useState(0);
   const [contributedBy, setContributedBy] = useState("");
 
-  // Handler functions for the form inputs. You can leave these as they are.
+ 
   const handleName = (e) => setName(e.target.value);
   const handleTagline = (e) => setTagline(e.target.value);
   const handleDescription = (e) => setDescription(e.target.value);
@@ -21,6 +23,26 @@ function AddBeerPage() {
   const handleAttenuationLevel = (e) => setAttenuationLevel(e.target.value);
   const handleContributedBy = (e) => setContributedBy(e.target.value);
 
+  const handleSubmit = async event => {
+    event.preventDefault()
+  const payload = { name, tagline, description,imageUrl,firstBrewed,brewersTips,attenuationLevel,contributedBy}
+  try {
+    const response = await fetch(`https://ih-beers-api2.herokuapp.com/beers/`,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+    if (response.status === 201) {
+      const newProject = await response.json()
+      console.log(response)
+      navigate(`beers${newProject.id}`)
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 
   // TASK:
@@ -34,7 +56,7 @@ function AddBeerPage() {
   return (
     <>
       <div className="d-inline-flex flex-column w-100 p-4">
-        <form>
+        <form onSubmit={handleSubmit}>
           <label>Name</label>
           <input
             className="form-control mb-4"
@@ -51,7 +73,7 @@ function AddBeerPage() {
             name="tagline"
             placeholder="Beer Tagline"
             value={tagline}
-            onChange={handleTagline}
+            onChange={(e) => setTagline(e.target.value)}
           />
 
           <label className="form-label">Description</label>
@@ -62,7 +84,7 @@ function AddBeerPage() {
             placeholder="Description"
             rows="3"
             value={description}
-            onChange={handleDescription}
+            onChange={ (e) => setDescription(e.target.value)}
           ></textarea>
 
           <label>Image</label>
@@ -72,7 +94,7 @@ function AddBeerPage() {
             name="imageUrl"
             placeholder="Image URL"
             value={imageUrl}
-            onChange={handleImageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
           />
 
           <label>First Brewed</label>
@@ -82,7 +104,7 @@ function AddBeerPage() {
             name="firstBrewed"
             placeholder="Date - MM/YYYY"
             value={firstBrewed}
-            onChange={handleFirstBrewed}
+            onChange={(e) => setFirstBrewed(e.target.value)}
           />
 
           <label>Brewer Tips</label>
@@ -92,7 +114,7 @@ function AddBeerPage() {
             name="brewersTips"
             placeholder="..."
             value={brewersTips}
-            onChange={handleBrewersTips}
+            onChange={(e) => setBrewersTips(e.target.value)}
           />
 
           <label>Attenuation Level</label>
@@ -107,7 +129,7 @@ function AddBeerPage() {
               type="number"
               name="attenuationLevel"
               value={attenuationLevel}
-              onChange={handleAttenuationLevel}
+              onChange={(e) => setAttenuationLevel(e.target.value)}
               min={0}
               max={100}
             />
@@ -120,9 +142,9 @@ function AddBeerPage() {
             name="contributedBy"
             placeholder="Contributed by"
             value={contributedBy}
-            onChange={handleContributedBy}
+            onChange={(e) => setContributedBy(e.target.value)}
           />
-          <button className="btn btn-primary btn-round">Add Beer</button>
+          <button type='submit' className="btn btn-primary btn-round">Add Beer</button>
         </form>
       </div>
     </>
